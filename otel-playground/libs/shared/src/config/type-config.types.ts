@@ -7,4 +7,11 @@ export interface AppConfig {
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: string;
   OTEL_SERVICE_NAME: string;
   OTEL_LOG_LEVEL: OtelLogLevel;
+  DATABASE_HOST: string;
+  DATABASE_PORT: number;
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
 }

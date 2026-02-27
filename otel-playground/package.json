@@ -7,24 +7,36 @@
     "libs/*"
   ],
   "scripts": {
-    "dev:gateway": "cd apps/gateway && bun run dev",
-    "dev:user": "cd apps/user-service && bun run dev",
-    "dev:order": "cd apps/order-service && bun run dev",
-    "dev": "concurrently \"bun run dev:gateway\" \"bun run dev:user\" \"bun run dev:order\"",
+    "dev:gateway": "bun run --filter gateway dev",
+    "dev:user": "bun run --filter user-service dev",
+    "dev:order": "bun run --filter order-service dev",
+    "dev:notification": "bun run --filter notification-service dev",
+    "dev": "concurrently -n gw,user,order,noti -c blue,green,yellow,magenta \"bun run dev:gateway\" \"bun run dev:user\" \"bun run dev:order\" \"bun run dev:notification\"",
     "build": "bun run --filter '*' build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
     "concurrently": "^9.0.0"
   },
   "dependencies": {
+    "@mikro-orm/core": "^6.6.0",
+    "@mikro-orm/nestjs": "^6.0.0",
+    "@mikro-orm/postgresql": "^6.6.0",
+    "@nestjs-modules/ioredis": "^2.0.0",
+    "@nestjs/bullmq": "^11.0.0",
     "@nestjs/common": "^11.1.14",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.70.1",
     "@opentelemetry/exporter-trace-otlp-http": "^0.212.0",
     "@opentelemetry/resources": "^2.5.1",
     "@opentelemetry/sdk-node": "^0.212.0",
-    "@opentelemetry/semantic-conventions": "^1.40.0"
+    "@opentelemetry/semantic-conventions": "^1.40.0",
+    "bullmq": "^5.0.0",
+    "ioredis": "^5.0.0"
   }
 }

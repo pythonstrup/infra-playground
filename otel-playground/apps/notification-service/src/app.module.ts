@@ -1,24 +1,17 @@
-import { OrderEntity } from '@app/entities/order.entity';
-import { OrderController } from '@app/order.controller';
-import { OrderService } from '@app/order.service';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { NotificationProcessor } from '@app/notification.processor';
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { TypeConfigModule } from '@shared/config/type-config.module';
-import { DatabaseModule } from '@shared/database/database.module';
 import { QueueModule } from '@shared/queue/queue.module';
 
 @Module({
   imports: [
     HttpModule,
     TypeConfigModule,
-    DatabaseModule,
     QueueModule,
-    MikroOrmModule.forFeature([OrderEntity]),
     BullModule.registerQueue({ name: 'order-notification' }),
   ],
-  controllers: [OrderController],
-  providers: [OrderService],
+  providers: [NotificationProcessor],
 })
 export class AppModule {}
