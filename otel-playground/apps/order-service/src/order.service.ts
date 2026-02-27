@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import { TypeConfigService } from '../../../libs/shared/src/config/type-config.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { TypeConfigService } from "@shared/config/type-config.service";
 
 interface Order {
   readonly id: string;
@@ -11,9 +11,9 @@ interface Order {
 }
 
 const ORDERS: readonly Order[] = [
-  { id: '1', userId: '1', product: 'Laptop', amount: 1200 },
-  { id: '2', userId: '2', product: 'Phone', amount: 800 },
-  { id: '3', userId: '1', product: 'Headphones', amount: 150 },
+  { id: "1", userId: "1", product: "Laptop", amount: 1200 },
+  { id: "2", userId: "2", product: "Phone", amount: 800 },
+  { id: "3", userId: "1", product: "Headphones", amount: 150 },
 ];
 
 @Injectable()
@@ -43,7 +43,7 @@ export class OrderService {
   }
 
   private async fetchUser(userId: string) {
-    const userServiceUrl = this.config.get('USER_SERVICE_URL');
+    const userServiceUrl = this.config.get("USER_SERVICE_URL");
     const { data } = await firstValueFrom(
       this.http.get(`${userServiceUrl}/users/${userId}`),
     );

@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
-import { TypeConfigModule } from '../../../libs/shared/src/config/type-config.module';
-import { OrderController } from './order.controller';
-import { OrderService } from './order.service';
+import { Module } from "@nestjs/common";
+import { HttpModule } from "@nestjs/axios";
+import { TypeConfigModule } from "@shared/config/type-config.module";
+import { OrderController } from "@app/order.controller";
+import { OrderService } from "@app/order.service";
 
 @Module({
   imports: [HttpModule, TypeConfigModule],

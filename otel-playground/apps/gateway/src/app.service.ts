@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import { TypeConfigService } from '../../../libs/shared/src/config/type-config.service';
+import { Injectable } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { TypeConfigService } from "@shared/config/type-config.service";
 
 @Injectable()
 export class AppService {
@@ -11,7 +11,7 @@ export class AppService {
   ) {}
 
   async getUsers() {
-    const userServiceUrl = this.config.get('USER_SERVICE_URL');
+    const userServiceUrl = this.config.get("USER_SERVICE_URL");
     const { data } = await firstValueFrom(
       this.http.get(`${userServiceUrl}/users`),
     );
@@ -19,7 +19,7 @@ export class AppService {
   }
 
   async getUser(id: string) {
-    const userServiceUrl = this.config.get('USER_SERVICE_URL');
+    const userServiceUrl = this.config.get("USER_SERVICE_URL");
     const { data } = await firstValueFrom(
       this.http.get(`${userServiceUrl}/users/${id}`),
     );
@@ -27,7 +27,7 @@ export class AppService {
   }
 
   async getOrders() {
-    const orderServiceUrl = this.config.get('ORDER_SERVICE_URL');
+    const orderServiceUrl = this.config.get("ORDER_SERVICE_URL");
     const { data } = await firstValueFrom(
       this.http.get(`${orderServiceUrl}/orders`),
     );
@@ -35,7 +35,7 @@ export class AppService {
   }
 
   async getOrder(id: string) {
-    const orderServiceUrl = this.config.get('ORDER_SERVICE_URL');
+    const orderServiceUrl = this.config.get("ORDER_SERVICE_URL");
     const { data } = await firstValueFrom(
       this.http.get(`${orderServiceUrl}/orders/${id}`),
     );
