@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-
-const USER_SERVICE = 'http://localhost:3001';
+import { TypeConfigService } from '../../../libs/shared/src/config/type-config.service';
 
 interface Order {
   readonly id: string;
@@ -19,7 +18,10 @@ const ORDERS: readonly Order[] = [
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    private readonly http: HttpService,
+    private readonly config: TypeConfigService,
+  ) {}
 
   async findAll() {
     const enriched = await Promise.all(
@@ -41,8 +43,9 @@ export class OrderService {
   }
 
   private async fetchUser(userId: string) {
+    const userServiceUrl = this.config.get('USER_SERVICE_URL');
     const { data } = await firstValueFrom(
-      this.http.get(`${USER_SERVICE}/users/${userId}`),
+      this.http.get(`${userServiceUrl}/users/${userId}`),
     );
     return data;
   }

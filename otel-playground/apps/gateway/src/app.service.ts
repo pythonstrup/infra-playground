@@ -1,38 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-
-const USER_SERVICE = 'http://localhost:3001';
-const ORDER_SERVICE = 'http://localhost:3002';
+import { TypeConfigService } from '../../../libs/shared/src/config/type-config.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    private readonly http: HttpService,
+    private readonly config: TypeConfigService,
+  ) {}
 
   async getUsers() {
+    const userServiceUrl = this.config.get('USER_SERVICE_URL');
     const { data } = await firstValueFrom(
-      this.http.get(`${USER_SERVICE}/users`),
+      this.http.get(`${userServiceUrl}/users`),
     );
     return data;
   }
 
   async getUser(id: string) {
+    const userServiceUrl = this.config.get('USER_SERVICE_URL');
     const { data } = await firstValueFrom(
-      this.http.get(`${USER_SERVICE}/users/${id}`),
+      this.http.get(`${userServiceUrl}/users/${id}`),
     );
     return data;
   }
 
   async getOrders() {
+    const orderServiceUrl = this.config.get('ORDER_SERVICE_URL');
     const { data } = await firstValueFrom(
-      this.http.get(`${ORDER_SERVICE}/orders`),
+      this.http.get(`${orderServiceUrl}/orders`),
     );
     return data;
   }
 
   async getOrder(id: string) {
+    const orderServiceUrl = this.config.get('ORDER_SERVICE_URL');
     const { data } = await firstValueFrom(
-      this.http.get(`${ORDER_SERVICE}/orders/${id}`),
+      this.http.get(`${orderServiceUrl}/orders/${id}`),
     );
     return data;
   }

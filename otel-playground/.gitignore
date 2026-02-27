@@ -5,3 +5,5 @@ dist/
 *.d.ts
 !nest-cli.json
 .DS_Store
+
+.idea
