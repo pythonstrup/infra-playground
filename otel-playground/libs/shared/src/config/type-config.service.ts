@@ -12,7 +12,7 @@ export class TypeConfigService {
     OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
       process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ??
       process.env.OTEL_EXPORTER_OTLP_ENDPOINT ??
-      'http://localhost:8200/v1/traces',
+      'http://localhost:4318/v1/traces',
     OTEL_SERVICE_NAME: process.env.OTEL_SERVICE_NAME ?? 'app',
     OTEL_LOG_LEVEL: this.resolveOtelLogLevel(process.env.OTEL_LOG_LEVEL),
     DATABASE_HOST: process.env.DATABASE_HOST ?? 'localhost',

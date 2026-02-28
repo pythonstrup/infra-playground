@@ -33,6 +33,18 @@ services:
     depends_on:
       - elasticsearch
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.120.0
+    container_name: otel-collector
+    command: ['--config=/etc/otelcol/config.yml']
+    volumes:
+      - ./otel-collector-config.yml:/etc/otelcol/config.yml:ro
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+    depends_on:
+      - apm-server
+
   postgres:
     image: postgres:17
     container_name: otel-postgres
