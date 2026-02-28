@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { TypeConfigService } from './type-config.service';
+import { TypeConfigService } from '@shared/config/type-config.service';
 
 @Global()
 @Module({

@@ -1,5 +1,6 @@
 import { UserEntity } from '@app/entities/user.entity';
 import { MikroORM } from '@mikro-orm/core';
+import type { LoggerService } from '@nestjs/common';
 
 const SEED_USERS = [
   { name: 'Alice', email: 'alice@example.com' },
@@ -7,12 +8,12 @@ const SEED_USERS = [
   { name: 'Charlie', email: 'charlie@example.com' },
 ] as const;
 
-export async function seed(orm: MikroORM): Promise<void> {
+export async function seed(orm: MikroORM, logger: LoggerService): Promise<void> {
   const em = orm.em.fork();
   const count = await em.count(UserEntity);
 
   if (count > 0) {
-    console.log(`Seed skipped: ${count} users already exist`);
+    logger.log(`Seed skipped: ${count} users already exist`, 'Seed');
     return;
   }
 
@@ -21,5 +22,5 @@ export async function seed(orm: MikroORM): Promise<void> {
   }
 
   await em.flush();
-  console.log(`Seeded ${SEED_USERS.length} users`);
+  logger.log(`Seeded ${SEED_USERS.length} users`, 'Seed');
 }

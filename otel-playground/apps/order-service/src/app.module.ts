@@ -7,6 +7,8 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { TypeConfigModule } from '@shared/config/type-config.module';
 import { DatabaseModule } from '@shared/database/database.module';
+import { LoggingModule } from '@shared/logging/logging.module';
+import { resolveLoggingOptions } from '@shared/logging/logging.types';
 import { QueueModule } from '@shared/queue/queue.module';
 
 @Module({
@@ -15,6 +17,7 @@ import { QueueModule } from '@shared/queue/queue.module';
     TypeConfigModule,
     DatabaseModule,
     QueueModule,
+    LoggingModule.forRoot(resolveLoggingOptions('order-service')),
     MikroOrmModule.forFeature([OrderEntity]),
     BullModule.registerQueue({ name: 'order-notification' }),
   ],

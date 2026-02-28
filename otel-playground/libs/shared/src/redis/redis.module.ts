@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis';
-import { TypeConfigModule } from '../config/type-config.module';
-import { TypeConfigService } from '../config/type-config.service';
+import { TypeConfigModule } from '@shared/config/type-config.module';
+import { TypeConfigService } from '@shared/config/type-config.service';
 
 @Module({
   imports: [

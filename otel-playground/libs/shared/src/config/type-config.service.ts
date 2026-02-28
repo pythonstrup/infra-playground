@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AppConfig, OtelLogLevel } from './type-config.types';
+import { AppConfig, LogLevel, OtelLogLevel } from '@shared/config/type-config.types';
 
 const OTEL_LOG_LEVELS: readonly OtelLogLevel[] = ['debug', 'info', 'warn', 'error', 'none'];
+const LOG_LEVELS: readonly LogLevel[] = ['debug', 'info', 'warn', 'error'];
 
 @Injectable()
 export class TypeConfigService {
   private readonly config: AppConfig = {
     NODE_ENV: process.env.NODE_ENV ?? 'development',
+    LOG_LEVEL: this.resolveLogLevel(process.env.LOG_LEVEL),
     USER_SERVICE_URL: process.env.USER_SERVICE_URL ?? 'http://localhost:3001',
     ORDER_SERVICE_URL: process.env.ORDER_SERVICE_URL ?? 'http://localhost:3002',
     OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
@@ -51,6 +53,17 @@ export class TypeConfigService {
       return defaultPort;
     }
     return port;
+  }
+
+  private resolveLogLevel(value: string | undefined): LogLevel {
+    const nodeEnv = process.env.NODE_ENV ?? 'development';
+    if (!value) {
+      return nodeEnv === 'production' ? 'info' : 'debug';
+    }
+    if (LOG_LEVELS.includes(value as LogLevel)) {
+      return value as LogLevel;
+    }
+    return nodeEnv === 'production' ? 'info' : 'debug';
   }
 
   private resolveOtelLogLevel(value: string | undefined): OtelLogLevel {

@@ -2,8 +2,8 @@ import { MikroORM } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
-import { TypeConfigModule } from '../config/type-config.module';
-import { TypeConfigService } from '../config/type-config.service';
+import { TypeConfigModule } from '@shared/config/type-config.module';
+import { TypeConfigService } from '@shared/config/type-config.service';
 
 @Module({
   imports: [

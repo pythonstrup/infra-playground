@@ -4,6 +4,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { createStandaloneLogger } from '@shared/logging/create-logger';
 
 let initialized = false;
 
@@ -13,6 +14,7 @@ export function initTracing(defaultServiceName: string): void {
   }
   initialized = true;
 
+  const logger = createStandaloneLogger(defaultServiceName);
   const logLevel = resolveLogLevel(process.env.OTEL_LOG_LEVEL);
 
   if (logLevel !== DiagLogLevel.NONE) {
@@ -33,14 +35,14 @@ export function initTracing(defaultServiceName: string): void {
   });
 
   sdk.start();
-  console.log(`OpenTelemetry tracing initialized for service: ${defaultServiceName}`);
+  logger.info(`OpenTelemetry tracing initialized for service: ${defaultServiceName}`);
 
   const shutdown = async () => {
     try {
       await sdk.shutdown();
-      console.log('OpenTelemetry SDK shut down successfully');
+      logger.info('OpenTelemetry SDK shut down successfully');
     } catch (err) {
-      console.error('Error shutting down OpenTelemetry SDK', err);
+      logger.error('Error shutting down OpenTelemetry SDK', { error: err });
     } finally {
       process.exit(0);
     }

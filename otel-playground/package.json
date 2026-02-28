@@ -37,6 +37,8 @@
     "@opentelemetry/sdk-node": "^0.212.0",
     "@opentelemetry/semantic-conventions": "^1.40.0",
     "bullmq": "^5.0.0",
-    "ioredis": "^5.0.0"
+    "ioredis": "^5.0.0",
+    "logform": "^2.7.0",
+    "winston": "^3.17.0"
   }
 }

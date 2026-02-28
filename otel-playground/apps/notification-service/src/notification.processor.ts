@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
 import { TypeConfigService } from '@shared/config/type-config.service';
+import { WinstonLoggerService } from '@shared/logging/winston-logger.service';
 import { Job } from 'bullmq';
 import { firstValueFrom } from 'rxjs';
 
@@ -14,11 +14,10 @@ interface OrderNotificationJob {
 
 @Processor('order-notification')
 export class NotificationProcessor extends WorkerHost {
-  private readonly logger = new Logger(NotificationProcessor.name);
-
   constructor(
     private readonly http: HttpService,
     private readonly config: TypeConfigService,
+    private readonly logger: WinstonLoggerService,
   ) {
     super();
   }
@@ -32,6 +31,6 @@ export class NotificationProcessor extends WorkerHost {
     // Simulate external API call delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    this.logger.log(`[SMS] To: ${user.email} — 주문 확인: ${product} (${amount}원)`);
+    this.logger.log(`[SMS] To: ${user.email} — 주문 확인: ${product} (${amount}원)`, NotificationProcessor.name);
   }
 }
