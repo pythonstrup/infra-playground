@@ -1,3 +1,7 @@
+import { initTracing } from '@shared/telemetry/tracing';
+
+initTracing('order-service');
+
 import { AppModule } from '@app/app.module';
 import { MikroORM } from '@mikro-orm/core';
 import { NestFactory } from '@nestjs/core';

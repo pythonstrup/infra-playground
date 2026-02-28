@@ -1,3 +1,7 @@
+import { initTracing } from '@shared/telemetry/tracing';
+
+initTracing('gateway');
+
 import { AppModule } from '@app/app.module';
 import { NestFactory } from '@nestjs/core';
 

@@ -1,3 +1,7 @@
+import { initTracing } from '@shared/telemetry/tracing';
+
+initTracing('user-service');
+
 import { AppModule } from '@app/app.module';
 import { seed } from '@app/seed';
 import { MikroORM } from '@mikro-orm/core';

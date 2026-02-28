@@ -1,3 +1,7 @@
+import { initTracing } from '@shared/telemetry/tracing';
+
+initTracing('notification-service');
+
 import { AppModule } from '@app/app.module';
 import { NestFactory } from '@nestjs/core';
 
