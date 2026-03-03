@@ -26,22 +26,22 @@ export class WinstonLoggerService implements LoggerService {
   }
 
   log(message: string, context?: string): void {
-    this.winston.info(message, { context });
+    this.winston.info(message, { 'log.logger': context });
   }
 
   error(message: string, trace?: string, context?: string): void {
-    this.winston.error(message, { trace, context });
+    this.winston.error(message, { trace, 'log.logger': context });
   }
 
   warn(message: string, context?: string): void {
-    this.winston.warn(message, { context });
+    this.winston.warn(message, { 'log.logger': context });
   }
 
   debug(message: string, context?: string): void {
-    this.winston.debug(message, { context });
+    this.winston.debug(message, { 'log.logger': context });
   }
 
   verbose(message: string, context?: string): void {
-    this.winston.verbose(message, { context });
+    this.winston.verbose(message, { 'log.logger': context });
   }
 }
