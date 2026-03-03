@@ -1,0 +1,1 @@
+{"id":"app-logs-data-view","type":"index-pattern","attributes":{"title":"logs-app-*","timeFieldName":"@timestamp","fieldFormatMap":"{}"},"references":[],"managed":false}

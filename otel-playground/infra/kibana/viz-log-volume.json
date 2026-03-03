@@ -1,0 +1,57 @@
+{
+  "attributes": {
+    "title": "Log Volume Over Time",
+    "visualizationType": "lnsXY",
+    "state": {
+      "visualization": {
+        "legend": { "isVisible": true, "position": "right" },
+        "preferredSeriesType": "bar_stacked",
+        "layers": [
+          {
+            "layerId": "layer1",
+            "seriesType": "bar_stacked",
+            "xAccessor": "col-ts",
+            "accessors": ["col-count"],
+            "layerType": "data"
+          }
+        ]
+      },
+      "datasourceStates": {
+        "formBased": {
+          "layers": {
+            "layer1": {
+              "columns": {
+                "col-ts": {
+                  "label": "@timestamp",
+                  "dataType": "date",
+                  "operationType": "date_histogram",
+                  "sourceField": "@timestamp",
+                  "isBucketed": true,
+                  "params": { "interval": "auto" }
+                },
+                "col-count": {
+                  "label": "Count",
+                  "dataType": "number",
+                  "operationType": "count",
+                  "isBucketed": false
+                }
+              },
+              "columnOrder": ["col-ts", "col-count"],
+              "incompleteColumns": {}
+            }
+          }
+        }
+      },
+      "query": { "language": "kuery", "query": "" },
+      "filters": []
+    },
+    "description": ""
+  },
+  "references": [
+    {
+      "type": "index-pattern",
+      "id": "app-logs-data-view",
+      "name": "indexpattern-datasource-layer-layer1"
+    }
+  ]
+}

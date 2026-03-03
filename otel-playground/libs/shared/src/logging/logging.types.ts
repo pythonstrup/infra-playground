@@ -4,6 +4,7 @@ export interface LoggingModuleOptions {
   readonly serviceName: string;
   readonly logLevel: LogLevel;
   readonly prettyPrint: boolean;
+  readonly fluentBitUrl?: string;
 }
 
 export const LOGGING_MODULE_OPTIONS = Symbol('LOGGING_MODULE_OPTIONS');
@@ -16,7 +17,13 @@ export function resolveLoggingOptions(serviceName: string): LoggingModuleOptions
   const rawLevel = process.env.LOG_LEVEL;
 
   const logLevel: LogLevel =
-    rawLevel && LOG_LEVELS.includes(rawLevel as LogLevel) ? (rawLevel as LogLevel) : isDev ? 'debug' : 'info';
+    rawLevel && LOG_LEVELS.includes(rawLevel as LogLevel)
+      ? (rawLevel as LogLevel)
+      : isDev
+        ? 'debug'
+        : 'info';
 
-  return Object.freeze({ serviceName, logLevel, prettyPrint: isDev });
+  const fluentBitUrl = process.env.FLUENT_BIT_URL || undefined;
+
+  return Object.freeze({ serviceName, logLevel, prettyPrint: isDev, fluentBitUrl });
 }
