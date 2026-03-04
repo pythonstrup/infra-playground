@@ -1,6 +1,0 @@
-{
-  "index_patterns": ["logs-app-*"],
-  "data_stream": {},
-  "composed_of": ["component-logs-app-mappings", "component-logs-app-settings"],
-  "priority": 200
-}
