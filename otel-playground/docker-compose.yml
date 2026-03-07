@@ -49,8 +49,10 @@ services:
     container_name: fluent-bit
     volumes:
       - ./infra/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
-    ports:
-      - '24224:24224'
+      - ./infra/fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - fluent-bit-db:/fluent-bit/db
+      - fluent-bit-storage:/fluent-bit/db/storage
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -71,9 +73,9 @@ services:
     image: postgres:${POSTGRES_VERSION}
     container_name: otel-postgres
     environment:
-      POSTGRES_USER: otel
-      POSTGRES_PASSWORD: otel
-      POSTGRES_DB: otel_playground
+      POSTGRES_USER: ${DATABASE_USER:-otel}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-otel}
+      POSTGRES_DB: ${DATABASE_NAME:-otel_playground}
     ports:
       - '54320:5432'
     volumes:
@@ -87,7 +89,118 @@ services:
     volumes:
       - redis-data:/data
 
+  gateway:
+    build:
+      context: .
+      args:
+        APP_NAME: gateway
+    container_name: gateway
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      NODE_ENV: production
+      USER_SERVICE_URL: http://user-service:3001
+      ORDER_SERVICE_URL: http://order-service:3002
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    depends_on:
+      - otel-collector
+
+  user-service:
+    build:
+      context: .
+      args:
+        APP_NAME: user-service
+    container_name: user-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      NODE_ENV: production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
+      DATABASE_USER: ${DATABASE_USER:-otel}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-otel}
+      DATABASE_NAME: ${DATABASE_NAME:-otel_playground}
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+    ports:
+      - '3001:3001'
+    restart: unless-stopped
+    depends_on:
+      - otel-collector
+      - postgres
+      - redis
+
+  order-service:
+    build:
+      context: .
+      args:
+        APP_NAME: order-service
+    container_name: order-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      NODE_ENV: production
+      USER_SERVICE_URL: http://user-service:3001
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
+      DATABASE_USER: ${DATABASE_USER:-otel}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-otel}
+      DATABASE_NAME: ${DATABASE_NAME:-otel_playground}
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+    ports:
+      - '3002:3002'
+    restart: unless-stopped
+    depends_on:
+      - otel-collector
+      - postgres
+      - redis
+
+  notification-service:
+    build:
+      context: .
+      args:
+        APP_NAME: notification-service
+    container_name: notification-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      NODE_ENV: production
+      USER_SERVICE_URL: http://user-service:3001
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+    ports:
+      - '3003:3003'
+    restart: unless-stopped
+    depends_on:
+      - otel-collector
+      - redis
+
 volumes:
   es-data:
   pg-data:
   redis-data:
+  fluent-bit-db:
+  fluent-bit-storage:

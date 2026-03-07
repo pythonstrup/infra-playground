@@ -4,7 +4,6 @@ export interface LoggingModuleOptions {
   readonly serviceName: string;
   readonly logLevel: LogLevel;
   readonly prettyPrint: boolean;
-  readonly fluentBitUrl?: string;
 }
 
 export const LOGGING_MODULE_OPTIONS = Symbol('LOGGING_MODULE_OPTIONS');
@@ -23,7 +22,5 @@ export function resolveLoggingOptions(serviceName: string): LoggingModuleOptions
         ? 'debug'
         : 'info';
 
-  const fluentBitUrl = process.env.FLUENT_BIT_URL || undefined;
-
-  return Object.freeze({ serviceName, logLevel, prettyPrint: isDev, fluentBitUrl });
+  return Object.freeze({ serviceName, logLevel, prettyPrint: isDev });
 }
