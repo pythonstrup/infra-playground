@@ -5,6 +5,8 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  fluentforward:
+    endpoint: 0.0.0.0:8006
 
 processors:
   memory_limiter:
@@ -20,6 +22,14 @@ exporters:
     endpoint: http://apm-server:8200
   debug:
     verbosity: basic
+  elasticsearch:
+    endpoints: [http://elasticsearch:9200]
+    logs_index: logs-app-default
+    mapping:
+      mode: ecs
+    flush:
+      bytes: 5242880
+      interval: 5s
 
 service:
   pipelines:
@@ -27,3 +37,7 @@ service:
       receivers: [otlp]
       processors: [memory_limiter, batch]
       exporters: [otlphttp, debug]
+    logs:
+      receivers: [fluentforward]
+      processors: [memory_limiter, batch]
+      exporters: [elasticsearch]

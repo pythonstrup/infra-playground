@@ -54,8 +54,8 @@ services:
       - fluent-bit-db:/fluent-bit/db
       - fluent-bit-storage:/fluent-bit/db/storage
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      otel-collector:
+        condition: service_started
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:${OTEL_COLLECTOR_VERSION}
@@ -67,7 +67,10 @@ services:
       - '4317:4317'
       - '4318:4318'
     depends_on:
-      - apm-server
+      apm-server:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
 
   postgres:
     image: postgres:${POSTGRES_VERSION}
