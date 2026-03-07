@@ -46,6 +46,11 @@ resource "elasticstack_elasticsearch_component_template" "mappings" {
             id = { type = "keyword" }
           }
         }
+        transaction = {
+          properties = {
+            id = { type = "keyword" }
+          }
+        }
         host = {
           properties = {
             name = { type = "keyword" }

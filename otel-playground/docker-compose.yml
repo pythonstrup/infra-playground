@@ -61,6 +61,8 @@ services:
     image: otel/opentelemetry-collector-contrib:${OTEL_COLLECTOR_VERSION}
     container_name: otel-collector
     command: ['--config=/etc/otelcol/config.yml']
+    environment:
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
     volumes:
       - ./otel-collector-config.yml:/etc/otelcol/config.yml:ro
     ports:

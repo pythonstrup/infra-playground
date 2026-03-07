@@ -4,18 +4,24 @@ import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TypeConfigService } from '@shared/config/type-config.service';
+import { type ContextLogger, WinstonLoggerService } from '@shared/logging/winston-logger.service';
 import { Queue } from 'bullmq';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrderService {
+  private readonly logger: ContextLogger;
+
   constructor(
     private readonly em: EntityManager,
     private readonly http: HttpService,
     private readonly config: TypeConfigService,
+    loggerService: WinstonLoggerService,
     @InjectQueue('order-notification')
     private readonly notificationQueue: Queue,
-  ) {}
+  ) {
+    this.logger = loggerService.forContext(OrderService.name);
+  }
 
   async findAll(): Promise<OrderEntity[]> {
     return this.em.findAll(OrderEntity);
@@ -27,6 +33,7 @@ export class OrderService {
       throw new NotFoundException(`Order ${id} not found`);
     }
 
+    this.logger.debug(`Fetching user ${order.userId} for order ${id}`);
     const user = await this.fetchUser(order.userId);
     return { ...order, user };
   }
@@ -37,6 +44,9 @@ export class OrderService {
       status: OrderStatus.CONFIRMED,
     });
     await this.em.persistAndFlush(order);
+    this.logger.log(
+      `Order created: id=${order.id} userId=${dto.userId} product=${dto.product} amount=${dto.amount}`,
+    );
 
     await this.notificationQueue.add('order-confirmed', {
       orderId: order.id,
@@ -44,6 +54,7 @@ export class OrderService {
       product: order.product,
       amount: order.amount,
     });
+    this.logger.debug(`Notification queued for order ${order.id}`);
 
     return order;
   }

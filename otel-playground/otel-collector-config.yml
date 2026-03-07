@@ -16,6 +16,15 @@ processors:
   batch:
     send_batch_size: 512
     timeout: 5s
+  resource/logs:
+    attributes:
+      - key: deployment.environment
+        value: "${DEPLOYMENT_ENVIRONMENT}"
+        action: upsert
+  attributes/logs:
+    actions:
+      - key: fluent.tag
+        action: delete
 
 exporters:
   otlphttp:
@@ -39,5 +48,5 @@ service:
       exporters: [otlphttp, debug]
     logs:
       receivers: [fluentforward]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, resource/logs, attributes/logs, batch]
       exporters: [elasticsearch]
