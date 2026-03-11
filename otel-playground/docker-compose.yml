@@ -110,7 +110,7 @@ services:
       NODE_ENV: production
       USER_SERVICE_URL: http://user-service:3001
       ORDER_SERVICE_URL: http://order-service:3002
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
     ports:
       - '3000:3000'
     restart: unless-stopped
@@ -138,7 +138,7 @@ services:
       DATABASE_NAME: ${DATABASE_NAME:-otel_playground}
       REDIS_HOST: redis
       REDIS_PORT: '6379'
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
     ports:
       - '3001:3001'
     restart: unless-stopped
@@ -169,7 +169,7 @@ services:
       DATABASE_NAME: ${DATABASE_NAME:-otel_playground}
       REDIS_HOST: redis
       REDIS_PORT: '6379'
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
     ports:
       - '3002:3002'
     restart: unless-stopped
@@ -195,7 +195,7 @@ services:
       USER_SERVICE_URL: http://user-service:3001
       REDIS_HOST: redis
       REDIS_PORT: '6379'
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
     ports:
       - '3003:3003'
     restart: unless-stopped

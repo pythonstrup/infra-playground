@@ -1,6 +1,6 @@
-import { initTracing } from '@shared/telemetry/tracing';
+import { initTelemetry } from '@shared/telemetry/telemetry';
 
-initTracing('order-service');
+initTelemetry('order-service');
 
 import { AppModule } from '@app/app.module';
 import { MikroORM } from '@mikro-orm/core';

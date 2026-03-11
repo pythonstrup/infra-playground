@@ -46,6 +46,10 @@ service:
       receivers: [otlp]
       processors: [memory_limiter, batch]
       exporters: [otlphttp, debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp, debug]
     logs:
       receivers: [fluentforward]
       processors: [memory_limiter, resource/logs, attributes/logs, batch]

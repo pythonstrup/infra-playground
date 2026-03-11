@@ -1,14 +1,16 @@
 import { DiagConsoleLogger, DiagLogLevel, diag } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { createStandaloneLogger } from '@shared/logging/create-logger';
 
 let initialized = false;
 
-export function initTracing(defaultServiceName: string): void {
+export function initTelemetry(defaultServiceName: string): void {
   if (initialized) {
     return;
   }
@@ -26,6 +28,12 @@ export function initTracing(defaultServiceName: string): void {
       [ATTR_SERVICE_NAME]: defaultServiceName,
     }),
     traceExporter: new OTLPTraceExporter(),
+    metricReaders: [
+      new PeriodicExportingMetricReader({
+        exporter: new OTLPMetricExporter(),
+        exportIntervalMillis: Number(process.env.OTEL_METRIC_EXPORT_INTERVAL) || 30_000,
+      }),
+    ],
     instrumentations: [
       getNodeAutoInstrumentations({
         '@opentelemetry/instrumentation-fs': { enabled: false },
@@ -35,7 +43,7 @@ export function initTracing(defaultServiceName: string): void {
   });
 
   sdk.start();
-  logger.info(`OpenTelemetry tracing initialized for service: ${defaultServiceName}`);
+  logger.info('OpenTelemetry SDK initialized', { service: defaultServiceName });
 
   const shutdown = async () => {
     try {

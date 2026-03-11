@@ -1,6 +1,6 @@
-import { initTracing } from '@shared/telemetry/tracing';
+import { initTelemetry } from '@shared/telemetry/telemetry';
 
-initTracing('user-service');
+initTelemetry('user-service');
 
 import { AppModule } from '@app/app.module';
 import { seed } from '@app/seed';

@@ -10,4 +10,4 @@ export { resolveLoggingOptions } from '@shared/logging/logging.types';
 export { WinstonLoggerService } from '@shared/logging/winston-logger.service';
 export { QueueModule } from '@shared/queue/queue.module';
 export { RedisModule } from '@shared/redis/redis.module';
-export { initTracing } from '@shared/telemetry/tracing';
+export { initTelemetry } from '@shared/telemetry/telemetry';
