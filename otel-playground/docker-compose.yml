@@ -53,8 +53,14 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - fluent-bit-db:/fluent-bit/db
       - fluent-bit-storage:/fluent-bit/db/storage
+      - pg-data:/pg-data:ro
+      - redis-data:/redis-data:ro
     depends_on:
       otel-collector:
+        condition: service_started
+      postgres:
+        condition: service_started
+      redis:
         condition: service_started
 
   otel-collector:
@@ -77,6 +83,7 @@ services:
   postgres:
     image: postgres:${POSTGRES_VERSION}
     container_name: otel-postgres
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     environment:
       POSTGRES_USER: ${DATABASE_USER:-otel}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-otel}
@@ -85,14 +92,17 @@ services:
       - '54320:5432'
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
 
   redis:
     image: redis:${REDIS_VERSION}
     container_name: otel-redis
+    command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - '63790:6379'
     volumes:
       - redis-data:/data
+      - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
 
   gateway:
     build:

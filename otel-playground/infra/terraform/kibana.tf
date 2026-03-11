@@ -11,6 +11,30 @@ resource "elasticstack_kibana_data_view" "app_logs" {
   depends_on = [elasticstack_elasticsearch_index_template.logs_app]
 }
 
+resource "elasticstack_kibana_data_view" "postgres_logs" {
+  data_view = {
+    id              = "postgres-logs-data-view"
+    name            = "logs-postgres-*"
+    title           = "logs-postgres-*"
+    time_field_name = "@timestamp"
+  }
+  override = true
+
+  depends_on = [elasticstack_elasticsearch_index_template.logs_postgres]
+}
+
+resource "elasticstack_kibana_data_view" "redis_logs" {
+  data_view = {
+    id              = "redis-logs-data-view"
+    name            = "logs-redis-*"
+    title           = "logs-redis-*"
+    time_field_name = "@timestamp"
+  }
+  override = true
+
+  depends_on = [elasticstack_elasticsearch_index_template.logs_redis]
+}
+
 # --- Visualizations & Dashboard ---
 # Lens visualizations and dashboards have no native Terraform resource.
 # elasticstack_kibana_import_saved_objects with inline ndjson is the standard approach.

@@ -7,6 +7,10 @@ receivers:
         endpoint: 0.0.0.0:4318
   fluentforward:
     endpoint: 0.0.0.0:8006
+  fluentforward/postgres:
+    endpoint: 0.0.0.0:8007
+  fluentforward/redis:
+    endpoint: 0.0.0.0:8008
 
 processors:
   memory_limiter:
@@ -25,6 +29,26 @@ processors:
     actions:
       - key: fluent.tag
         action: delete
+  resource/postgres:
+    attributes:
+      - key: service.name
+        value: postgresql
+        action: upsert
+      - key: deployment.environment
+        value: "${DEPLOYMENT_ENVIRONMENT}"
+        action: upsert
+  resource/redis:
+    attributes:
+      - key: service.name
+        value: redis
+        action: upsert
+      - key: deployment.environment
+        value: "${DEPLOYMENT_ENVIRONMENT}"
+        action: upsert
+  attributes/db:
+    actions:
+      - key: fluent.tag
+        action: delete
 
 exporters:
   otlphttp:
@@ -34,6 +58,22 @@ exporters:
   elasticsearch:
     endpoints: [http://elasticsearch:9200]
     logs_index: logs-app-default
+    mapping:
+      mode: ecs
+    flush:
+      bytes: 5242880
+      interval: 5s
+  elasticsearch/postgres:
+    endpoints: [http://elasticsearch:9200]
+    logs_index: logs-postgres-default
+    mapping:
+      mode: ecs
+    flush:
+      bytes: 5242880
+      interval: 5s
+  elasticsearch/redis:
+    endpoints: [http://elasticsearch:9200]
+    logs_index: logs-redis-default
     mapping:
       mode: ecs
     flush:
@@ -54,3 +94,11 @@ service:
       receivers: [fluentforward]
       processors: [memory_limiter, resource/logs, attributes/logs, batch]
       exporters: [elasticsearch]
+    logs/postgres:
+      receivers: [fluentforward/postgres]
+      processors: [memory_limiter, resource/postgres, attributes/db, batch]
+      exporters: [elasticsearch/postgres]
+    logs/redis:
+      receivers: [fluentforward/redis]
+      processors: [memory_limiter, resource/redis, attributes/db, batch]
+      exporters: [elasticsearch/redis]
