@@ -11,6 +11,19 @@ receivers:
     endpoint: 0.0.0.0:8007
   fluentforward/redis:
     endpoint: 0.0.0.0:8008
+  postgresql:
+    endpoint: postgres:5432
+    transport: tcp
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    databases:
+      - ${DATABASE_NAME}
+    collection_interval: 30s
+    tls:
+      insecure: true
+  redis:
+    endpoint: redis:6379
+    collection_interval: 30s
 
 processors:
   memory_limiter:
@@ -102,3 +115,11 @@ service:
       receivers: [fluentforward/redis]
       processors: [memory_limiter, resource/redis, attributes/db, batch]
       exporters: [elasticsearch/redis]
+    metrics/postgres:
+      receivers: [postgresql]
+      processors: [memory_limiter, resource/postgres, batch]
+      exporters: [otlphttp, debug]
+    metrics/redis:
+      receivers: [redis]
+      processors: [memory_limiter, resource/redis, batch]
+      exporters: [otlphttp, debug]

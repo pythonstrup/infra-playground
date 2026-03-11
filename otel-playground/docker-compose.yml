@@ -69,6 +69,9 @@ services:
     command: ['--config=/etc/otelcol/config.yml']
     environment:
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
+      DATABASE_USER: ${DATABASE_USER:-otel}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-otel}
+      DATABASE_NAME: ${DATABASE_NAME:-otel_playground}
     volumes:
       - ./otel-collector-config.yml:/etc/otelcol/config.yml:ro
     ports:
@@ -79,6 +82,10 @@ services:
         condition: service_started
       elasticsearch:
         condition: service_healthy
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
 
   postgres:
     image: postgres:${POSTGRES_VERSION}
@@ -93,6 +100,7 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
       - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./infra/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   redis:
     image: redis:${REDIS_VERSION}
