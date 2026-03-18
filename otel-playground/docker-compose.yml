@@ -221,6 +221,10 @@ services:
       - otel-collector
       - redis
 
+networks:
+  default:
+    name: otel-playground
+
 volumes:
   es-data:
   pg-data:
