@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: kt-catalog-service
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:54320}/${DB_NAME:otel_playground}
+    username: ${DB_USER:otel}
+    password: ${DB_PASSWORD:otel}
+    pool:
+      max-size: 10
+      initial-size: 2
+  flyway:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:54320}/${DB_NAME:otel_playground}
+    user: ${DB_USER:otel}
+    password: ${DB_PASSWORD:otel}
+    schemas: catalog
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:63790}
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

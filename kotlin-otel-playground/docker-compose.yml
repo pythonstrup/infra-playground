@@ -1,0 +1,100 @@
+services:
+  kt-catalog-service:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: catalog-service
+    container_name: kt-catalog-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      OTEL_SERVICE_NAME: kt-catalog-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER}
+      OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER}
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+
+  kt-inventory-service:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: inventory-service
+    container_name: kt-inventory-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      CATALOG_SERVICE_URL: ${CATALOG_SERVICE_URL}
+      OTEL_SERVICE_NAME: kt-inventory-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER}
+      OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER}
+    ports:
+      - '8081:8081'
+    restart: unless-stopped
+    depends_on:
+      - kt-catalog-service
+
+  kt-fulfillment-service:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: fulfillment-service
+    container_name: kt-fulfillment-service
+    labels:
+      log_collect: 'true'
+    logging:
+      driver: json-file
+      options:
+        labels: log_collect
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      CATALOG_SERVICE_URL: ${CATALOG_SERVICE_URL}
+      INVENTORY_SERVICE_URL: ${INVENTORY_SERVICE_URL}
+      OTEL_SERVICE_NAME: kt-fulfillment-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER}
+      OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER}
+    ports:
+      - '8082:8082'
+    restart: unless-stopped
+    depends_on:
+      - kt-catalog-service
+      - kt-inventory-service
+
+networks:
+  default:
+    name: otel-playground
+    external: true

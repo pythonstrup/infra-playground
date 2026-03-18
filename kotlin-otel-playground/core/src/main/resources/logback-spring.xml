@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="serviceName" source="spring.application.name" defaultValue="unknown"/>
+
+    <!-- Pretty console for local development -->
+    <springProfile name="!docker">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan(%logger{36}) - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- ECS JSON for Docker (Fluent Bit compatible) -->
+    <springProfile name="docker">
+        <appender name="ECS_JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="co.elastic.logging.logback.EcsEncoder">
+                <serviceName>${serviceName}</serviceName>
+                <includeMarkers>false</includeMarkers>
+                <stackTraceAsArray>false</stackTraceAsArray>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="ECS_JSON"/>
+        </root>
+    </springProfile>
+</configuration>
