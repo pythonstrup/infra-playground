@@ -66,6 +66,10 @@ processors:
 exporters:
   otlphttp:
     endpoint: http://apm-server:8200
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    resource_to_telemetry_conversion:
+      enabled: true
   debug:
     verbosity: basic
   elasticsearch:
@@ -102,7 +106,7 @@ service:
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [otlphttp, debug]
+      exporters: [otlphttp, prometheusremotewrite, debug]
     logs:
       receivers: [fluentforward]
       processors: [memory_limiter, resource/logs, attributes/logs, batch]
@@ -118,8 +122,8 @@ service:
     metrics/postgres:
       receivers: [postgresql]
       processors: [memory_limiter, resource/postgres, batch]
-      exporters: [otlphttp, debug]
+      exporters: [otlphttp, prometheusremotewrite, debug]
     metrics/redis:
       receivers: [redis]
       processors: [memory_limiter, resource/redis, batch]
-      exporters: [otlphttp, debug]
+      exporters: [otlphttp, prometheusremotewrite, debug]

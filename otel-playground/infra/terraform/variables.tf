@@ -10,6 +10,19 @@ variable "kibana_url" {
   default     = "http://localhost:5601"
 }
 
+variable "grafana_url" {
+  description = "Grafana endpoint URL"
+  type        = string
+  default     = "http://localhost:3100"
+}
+
+variable "grafana_auth" {
+  description = "Grafana admin credentials (user:password)"
+  type        = string
+  default     = "admin:admin"
+  sensitive   = true
+}
+
 # --- PostgreSQL ---
 
 variable "postgresql_host" {

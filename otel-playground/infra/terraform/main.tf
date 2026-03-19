@@ -8,6 +8,10 @@ terraform {
       source  = "cyrilgdn/postgresql"
       version = "~> 1.25"
     }
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -26,4 +30,9 @@ provider "postgresql" {
   username = var.postgresql_superuser
   password = var.postgresql_superuser_password
   sslmode  = "disable"
+}
+
+provider "grafana" {
+  url  = var.grafana_url
+  auth = var.grafana_auth
 }

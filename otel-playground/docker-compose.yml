@@ -63,6 +63,20 @@ services:
       redis:
         condition: service_started
 
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-v3.2.1}
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-remote-write-receiver'
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:${OTEL_COLLECTOR_VERSION}
     container_name: otel-collector
@@ -82,6 +96,8 @@ services:
         condition: service_started
       elasticsearch:
         condition: service_healthy
+      prometheus:
+        condition: service_started
       postgres:
         condition: service_started
       redis:
@@ -226,6 +242,24 @@ services:
       - otel-collector
       - redis
 
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-11.4.0}
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    ports:
+      - '3100:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+    restart: unless-stopped
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
 networks:
   default:
     name: otel-playground
@@ -236,3 +270,5 @@ volumes:
   redis-data:
   fluent-bit-db:
   fluent-bit-storage:
+  grafana-data:
+  prometheus-data:

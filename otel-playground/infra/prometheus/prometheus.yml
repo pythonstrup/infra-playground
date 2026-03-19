@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+# Remote write receiver is enabled via --web.enable-remote-write-receiver flag.
+# OTel Collector pushes metrics via prometheusremotewrite exporter.
+# No scrape configs needed — all metrics arrive via remote write.
