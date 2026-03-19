@@ -8,7 +8,7 @@ export enum OrderStatus {
 
 @Entity()
 export class OrderEntity {
-  [OptionalProps]?: 'status' | 'createdAt';
+  [OptionalProps]?: 'productId' | 'product' | 'status' | 'createdAt';
 
   @PrimaryKey()
   id!: number;
@@ -16,8 +16,11 @@ export class OrderEntity {
   @Property()
   userId!: number;
 
+  @Property({ nullable: true })
+  productId?: number;
+
   @Property()
-  product!: string;
+  product: string = '';
 
   @Property()
   amount!: number;
